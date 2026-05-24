@@ -40,7 +40,10 @@ def _safe_extract(tar: tarfile.TarFile, dest: Path) -> None:
         target = (dest / member.name).resolve()
         if os.path.commonpath([str(dest), str(target)]) != str(dest):
             raise WorkspaceError(f"unsafe path in git archive: {member.name}")
-        tar.extract(member, dest)
+        try:
+            tar.extract(member, dest, filter="data")
+        except TypeError:
+            tar.extract(member, dest)
 
 
 def export_base_snapshot(source_repo: Path, commit: str, dest: Path, init_git: bool = True) -> Path:
