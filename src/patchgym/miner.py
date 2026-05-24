@@ -9,7 +9,6 @@ from typing import Iterable, List, Sequence, Tuple
 from .gitutils import CommandError, git, require_git_repo
 from .models import Task
 
-
 BUGFIX_WORDS = (
     "fix",
     "bug",
@@ -120,7 +119,8 @@ def build_prompt(subject: str, base_commit: str, validation_command: str, soluti
     return (
         "You are given a repository snapshot from a historical commit.\n\n"
         f"Historical change summary: {subject}\n\n"
-        "Your job is to edit the code so the hidden tests pass. The hidden tests were written in the same historical commit as the fix.\n\n"
+        "Your job is to edit the code so the hidden tests pass. "
+        "The hidden tests were written in the same historical commit as the fix.\n\n"
         f"Base commit: {base_commit}\n\n"
         "Likely source files touched by the historical fix:\n"
         f"{files}\n\n"

@@ -1,17 +1,37 @@
 from __future__ import annotations
 
 import os
+import shlex
 import shutil
 import subprocess
 import tarfile
+import time
 from pathlib import Path
 from typing import Optional
 
 from .gitutils import git, init_repo, run
 
+DEFAULT_GIT_ARCHIVE_TIMEOUT = 60
+
 
 class WorkspaceError(RuntimeError):
     pass
+
+
+def _within(path: Path, root: Path) -> bool:
+    path = path.resolve()
+    root = root.resolve()
+    return os.path.commonpath([str(root), str(path)]) == str(root)
+
+
+def safe_remove_tree(path: Path, allowed_root: Path) -> None:
+    path = Path(path).resolve()
+    allowed_root = Path(allowed_root).resolve()
+    if not _within(path, allowed_root):
+        raise WorkspaceError(f"refusing to delete outside allowed root: {path}")
+    if path == allowed_root:
+        raise WorkspaceError(f"refusing to delete allowed root itself: {path}")
+    shutil.rmtree(path, ignore_errors=True)
 
 
 def _safe_extract(tar: tarfile.TarFile, dest: Path) -> None:
@@ -39,7 +59,11 @@ def export_base_snapshot(source_repo: Path, commit: str, dest: Path, init_git: b
             _safe_extract(tar, dest)
     finally:
         stderr = proc.stderr.read().decode("utf-8", errors="replace") if proc.stderr else ""
-        returncode = proc.wait()
+        try:
+            returncode = proc.wait(timeout=DEFAULT_GIT_ARCHIVE_TIMEOUT)
+        except subprocess.TimeoutExpired as exc:
+            proc.kill()
+            raise WorkspaceError(f"git archive timed out for {commit}") from exc
     if returncode != 0:
         raise WorkspaceError(f"git archive failed for {commit}: {stderr}")
 
@@ -58,25 +82,29 @@ def apply_patch(workspace: Path, patch_file: Path, check: bool = True):
     )
 
 
-def run_shell(command: str, cwd: Path, timeout: Optional[int] = None, env: Optional[dict] = None):
-    import subprocess
-    import time
-
+def run_command(
+    command: str,
+    cwd: Path,
+    timeout: Optional[int] = None,
+    env: Optional[dict] = None,
+    shell: bool = False,
+):
     cwd = Path(cwd)
     merged_env = os.environ.copy()
     if env:
         merged_env.update(env)
     merged_env.setdefault("PYTHONPYCACHEPREFIX", str(cwd / ".patchgym_pycache"))
+    argv = command if shell else shlex.split(command)
 
     start = time.monotonic()
     proc = subprocess.run(
-        command,
+        argv,
         cwd=str(cwd),
-        shell=True,
+        shell=shell,
         text=True,
         stdout=subprocess.PIPE,
         stderr=subprocess.PIPE,
-        timeout=timeout,
+        timeout=timeout if timeout is not None else 120,
         env=merged_env,
     )
     return {
@@ -88,9 +116,18 @@ def run_shell(command: str, cwd: Path, timeout: Optional[int] = None, env: Optio
     }
 
 
+def run_shell(command: str, cwd: Path, timeout: Optional[int] = None, env: Optional[dict] = None):
+    # Only use the shell for explicit user-supplied agent commands.
+    return run_command(command, cwd=cwd, timeout=timeout, env=env, shell=True)
+
+
 def clean_python_bytecode(root: Path) -> None:
-    shutil.rmtree(Path(root) / ".patchgym_pycache", ignore_errors=True)
+    root = Path(root).resolve()
+    cache_root = root / ".patchgym_pycache"
+    if cache_root.exists():
+        safe_remove_tree(cache_root, allowed_root=root)
     for cache_dir in Path(root).rglob("__pycache__"):
-        shutil.rmtree(cache_dir, ignore_errors=True)
+        safe_remove_tree(cache_dir, allowed_root=root)
     for pyc in Path(root).rglob("*.pyc"):
-        pyc.unlink(missing_ok=True)
+        if _within(pyc, root):
+            pyc.unlink(missing_ok=True)

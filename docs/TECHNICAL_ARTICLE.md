@@ -22,7 +22,7 @@ PatchGym scans first-parent Git history and looks for small commits that changed
 - test-looking files become `hidden_tests.patch`,
 - all other changed files become `oracle_solution.patch`.
 
-This is a heuristic, not magic. It works best when projects commit failing regression tests and fixes together. It is intentionally inspectable: the output is ordinary JSON and ordinary Git patches.
+This is a heuristic, not magic. It works most reliably when projects commit failing regression tests and fixes together. It is intentionally inspectable: the output is ordinary JSON and ordinary Git patches.
 
 ## Running An Agent
 

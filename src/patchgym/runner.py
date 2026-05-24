@@ -10,7 +10,7 @@ from typing import Dict, List, Optional
 from .gitutils import run
 from .models import Task
 from .report import write_json, write_markdown_report
-from .workspace import apply_patch, clean_python_bytecode, export_base_snapshot, run_shell
+from .workspace import apply_patch, clean_python_bytecode, export_base_snapshot, run_command, run_shell
 
 
 @dataclass
@@ -26,6 +26,8 @@ class AgentRunResult:
     stdout_file: str
     stderr_file: str
     workspace: str
+    changed_files: List[str]
+    validation_command: str
     error: str = ""
 
     def to_dict(self) -> Dict:
@@ -101,6 +103,7 @@ def run_task(
         stderr_file.write_text(agent_result.get("stderr", ""))
 
         patch = run(["git", "diff", "--binary"], cwd=workspace).stdout
+        changed_files = run(["git", "diff", "--name-only"], cwd=workspace).stdout.splitlines()
         patch_file.write_text(patch)
         patch_lines = _count_patch_lines(patch)
 
@@ -112,7 +115,7 @@ def run_task(
             hidden_applied = hidden.returncode == 0
             if hidden_applied:
                 clean_python_bytecode(workspace)
-                validation = run_shell(task.validation_command, workspace, timeout=validation_timeout)
+                validation = run_command(task.validation_command, workspace, timeout=validation_timeout)
                 validation_returncode = validation["returncode"]
                 (task_out / "validation.stdout.txt").write_text(validation["stdout"])
                 (task_out / "validation.stderr.txt").write_text(validation["stderr"])
@@ -134,6 +137,8 @@ def run_task(
             stdout_file=str(stdout_file),
             stderr_file=str(stderr_file),
             workspace=str(workspace) if keep_workspace else "",
+            changed_files=changed_files,
+            validation_command=task.validation_command,
             error=error,
         )
     except Exception as exc:  # pragma: no cover - exercised through CLI error paths
@@ -149,6 +154,8 @@ def run_task(
             stdout_file=str(stdout_file),
             stderr_file=str(stderr_file),
             workspace=str(workspace) if keep_workspace else "",
+            changed_files=[],
+            validation_command=task.validation_command,
             error=str(exc),
         )
 

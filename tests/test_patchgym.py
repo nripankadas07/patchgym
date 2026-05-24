@@ -51,7 +51,9 @@ def test_shell_agent_contract(tmp_path: Path) -> None:
                 "assert Path(os.environ['PATCHGYM_PROMPT_FILE']).exists()",
                 "path = Path('calculator.py')",
                 "text = path.read_text()",
-                "path.write_text(text.replace('return lower\\n    return value', 'return upper\\n    return value', 1))",
+                "path.write_text(",
+                "    text.replace('return lower\\n    return value', 'return upper\\n    return value', 1)",
+                ")",
                 "",
             ]
         )

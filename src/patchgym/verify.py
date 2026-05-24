@@ -6,7 +6,7 @@ from pathlib import Path
 from typing import List, Optional
 
 from .models import Task
-from .workspace import apply_patch, clean_python_bytecode, export_base_snapshot, run_shell
+from .workspace import apply_patch, clean_python_bytecode, export_base_snapshot, run_command
 
 
 @dataclass
@@ -40,11 +40,11 @@ def verify_task(
         export_base_snapshot(task.repo_path(repo), task.base_commit, workspace)
         apply_patch(workspace, task.test_patch_path)
         clean_python_bytecode(workspace)
-        base_result = run_shell(task.validation_command, workspace, timeout=timeout)
+        base_result = run_command(task.validation_command, workspace, timeout=timeout)
         base_failed = base_result["returncode"] != 0
         apply_patch(workspace, task.solution_patch_path)
         clean_python_bytecode(workspace)
-        oracle_result = run_shell(task.validation_command, workspace, timeout=timeout)
+        oracle_result = run_command(task.validation_command, workspace, timeout=timeout)
         oracle_passed = oracle_result["returncode"] == 0
         return VerificationResult(
             task_id=task.id,

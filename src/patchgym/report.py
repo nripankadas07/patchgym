@@ -21,24 +21,26 @@ def write_markdown_report(path: Path, agent: str, results: Iterable[Dict]) -> No
         "",
         f"Score: **{solved}/{total}**",
         "",
-        "| Task | Result | Validation | Agent Time | Patch Lines |",
-        "| --- | --- | ---: | ---: | ---: |",
+        "| Task | Result | Validation | Agent Time | Patch Lines | Changed Files |",
+        "| --- | --- | ---: | ---: | ---: | --- |",
     ]
     for row in rows:
         result = "pass" if row.get("solved") else "fail"
         lines.append(
-            "| `{task_id}` | {result} | {returncode} | {duration:.2f}s | {patch_lines} |".format(
+            "| `{task_id}` | {result} | {returncode} | {duration:.2f}s | {patch_lines} | {changed_files} |".format(
                 task_id=row["task_id"],
                 result=result,
                 returncode=row.get("validation_returncode", ""),
                 duration=row.get("agent_duration_s", 0.0),
                 patch_lines=row.get("patch_lines", 0),
+                changed_files=", ".join(row.get("changed_files") or []) or "none",
             )
         )
     lines.extend(
         [
             "",
-            "A task passes when PatchGym can apply the hidden tests after the agent run and the validation command exits with code 0.",
+            "A task passes when PatchGym can apply the hidden tests after the agent run "
+            "and the validation command exits with code 0.",
             "",
         ]
     )

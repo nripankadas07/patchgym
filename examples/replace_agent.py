@@ -7,7 +7,6 @@ files in place.
 
 from pathlib import Path
 
-
 path = Path("calculator.py")
 text = path.read_text()
 path.write_text(text.replace("return lower\n    return value", "return upper\n    return value", 1))

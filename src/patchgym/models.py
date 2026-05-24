@@ -5,7 +5,6 @@ from dataclasses import asdict, dataclass, field
 from pathlib import Path
 from typing import Any, Dict, List, Optional
 
-
 SCHEMA_VERSION = "0.1"
 
 
@@ -30,10 +29,10 @@ class Task:
     def task_dir(self) -> Path:
         if not hasattr(self, "_task_dir"):
             raise ValueError("task_dir is only available for loaded or saved tasks")
-        return getattr(self, "_task_dir")
+        return self._task_dir
 
     def with_task_dir(self, task_dir: Path) -> "Task":
-        setattr(self, "_task_dir", task_dir)
+        self._task_dir = task_dir
         return self
 
     @property

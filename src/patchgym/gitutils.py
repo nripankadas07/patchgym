@@ -6,6 +6,8 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Mapping, Optional, Sequence
 
+DEFAULT_COMMAND_TIMEOUT = 60
+
 
 @dataclass
 class CommandResult:
@@ -40,7 +42,7 @@ def run(
         text=True,
         stdout=subprocess.PIPE,
         stderr=subprocess.PIPE,
-        timeout=timeout,
+        timeout=timeout if timeout is not None else DEFAULT_COMMAND_TIMEOUT,
         env=dict(env) if env else None,
     )
     result = CommandResult(
@@ -56,7 +58,7 @@ def run(
 
 
 def git(repo: Path, *args: str, check: bool = True, timeout: Optional[int] = None) -> CommandResult:
-    return run(["git", *args], cwd=repo, check=check, timeout=timeout)
+    return run(["git", *args], cwd=repo, check=check, timeout=timeout or DEFAULT_COMMAND_TIMEOUT)
 
 
 def git_top_level(repo: Path) -> Path:

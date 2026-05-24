@@ -2,184 +2,147 @@
 
 Turn any Git repository into a local SWE-bench-style coding-agent benchmark.
 
-PatchGym turns your Git history into a coding-agent gym. It mines real commits, extracts hidden tests and oracle patches, verifies that the task is meaningful, runs an agent command against the base repo, and reports whether the agent actually fixed the code.
+PatchGym mines real Git history, creates hidden-test coding-agent tasks, runs agents against those tasks, and reports whether their patches actually fixed the code.
 
-The core idea is small: your repository already contains a history of bugs, fixes, tests, and design choices. PatchGym turns that history into reproducible coding-agent tasks.
+PatchGym is alpha software: local-first, practical, research-quality, and designed to be read. It is not a hosted leaderboard, not a cloud service, and not a claim that one model or agent wins everywhere.
 
-## Why
+## Install From Source
 
-Coding agents are useful, but public benchmark scores do not answer the question most maintainers care about:
-
-> Which agent can safely fix my codebase, under my tests, with my architecture, using my real history?
-
-PatchGym is a local-first reference implementation for answering that question. It does not require an API key for the demo. It does not run a cloud service. It does not claim leaderboard numbers. It gives you a readable harness you can inspect, modify, and run on your own repositories.
-
-## Quickstart
-
-Run the built-in demo from a checkout:
+PatchGym is not published to PyPI. Install it from a source checkout:
 
 ```bash
-git clone https://github.com/nripankadas07/patchgym.git
+git clone https://github.com/nripankadas07/patchgym
 cd patchgym
 python3 -m venv .venv
 source .venv/bin/activate
 python -m pip install --upgrade pip
 python -m pip install -e ".[dev]"
-patchgym demo
 ```
 
-The demo creates a tiny Git repo with one historical bug fix, mines it into a task, verifies the hidden-test/oracle split, runs a no-op agent, runs an oracle agent, and writes a Markdown report.
+## 60-Second Demo
+
+```bash
+bash scripts/demo.sh
+```
+
+The demo creates a tiny Git repository, mines one historical bug fix, verifies the hidden-test/oracle split, runs a toy shell agent, grades the patch, and writes:
+
+- `.patchgym/reports/report.json`
+- `.patchgym/reports/report.md`
+- `.patchgym/reports/index.html`
 
 Expected shape:
 
 ```text
-tasks mined: 1
-verification: valid
-noop solved: 0/1
-oracle solved: 1/1
+mined 1 task(s)
+built 1/1 valid task(s)
+agent 'bash .../examples/custom_agent/agent.sh' solved 1/1 task(s)
+PatchGym demo complete
 ```
-
-## CLI
-
-Mine tasks from a repository:
-
-```bash
-patchgym mine /path/to/repo \
-  --out .patchgym/tasks \
-  --validation "python -m pytest -q" \
-  --max-tasks 20
-```
-
-Verify mined tasks:
-
-```bash
-patchgym verify .patchgym/tasks --repo /path/to/repo
-```
-
-Run a shell-based agent:
-
-```bash
-patchgym run .patchgym/tasks \
-  --repo /path/to/repo \
-  --agent "python /path/to/my_agent.py" \
-  --out .patchgym/runs/my-agent
-```
-
-PatchGym also includes two built-in baselines:
-
-```bash
-patchgym run .patchgym/tasks --agent noop
-patchgym run .patchgym/tasks --agent oracle
-```
-
-`noop` changes nothing. `oracle` applies the historical solution patch and is useful for validating the benchmark harness itself.
 
 ## How It Works
 
-For each selected historical commit, PatchGym tries to split the change into:
+For each selected historical commit, PatchGym splits the change into:
 
-- a base commit,
-- a hidden test patch,
-- an oracle solution patch,
-- a task prompt,
-- a validation command.
+- base commit,
+- hidden test patch,
+- oracle solution patch,
+- task prompt,
+- validation command.
 
-A task is only useful if:
-
-- `base + hidden tests` fails,
-- `base + hidden tests + oracle solution` passes.
-
-That invariant is the heart of the project.
-
-At run time, an agent sees a clean exported snapshot of the base commit and a prompt. It does not receive the hidden tests or oracle solution. PatchGym captures the agent diff, applies the hidden tests, runs the validation command, and records the result.
-
-For a deeper walkthrough, read [docs/TECHNICAL_ARTICLE.md](docs/TECHNICAL_ARTICLE.md).
-
-## Agent Contract
-
-PatchGym can run any command as an agent. The command is executed inside the base repository snapshot. The following environment variables are provided:
-
-- `PATCHGYM_TASK_ID`
-- `PATCHGYM_REPO_DIR`
-- `PATCHGYM_PROMPT_FILE`
-- `PATCHGYM_METADATA_FILE`
-- `PATCHGYM_VALIDATION_COMMAND`
-
-The agent should modify files in the current working directory. PatchGym captures those modifications with `git diff`.
-
-Example agent:
-
-```python
-# examples/replace_agent.py
-from pathlib import Path
-
-path = Path("calculator.py")
-text = path.read_text()
-path.write_text(text.replace("return lower", "return upper", 1))
-```
-
-Then:
-
-```bash
-patchgym run .patchgym/tasks --agent "python examples/replace_agent.py"
-```
-
-## Task Format
-
-Each task directory contains:
+A task is valid only when:
 
 ```text
-task.json
-hidden_tests.patch
-oracle_solution.patch
+base + hidden tests fails
+base + hidden tests + oracle patch passes
 ```
 
-`task.json` stores reproducibility metadata, including the base commit, target commit, prompt, validation command, changed files, and relative patch paths.
+During an agent run, PatchGym exports the base commit into a temporary workspace, runs the agent command there, captures the agent diff, applies hidden tests, runs the validation command, and records the result.
 
-The patch files are ordinary Git patches. They can be inspected with:
+## CLI
 
 ```bash
-git apply --stat .patchgym/tasks/<task>/hidden_tests.patch
-git apply --stat .patchgym/tasks/<task>/oracle_solution.patch
+patchgym init
+patchgym mine .
+patchgym build .
+patchgym list
+patchgym show <task-id>
+patchgym verify <task-id>
+patchgym context <task-id>
+patchgym run <task-id> --agent "bash examples/custom_agent/agent.sh"
+patchgym grade
+patchgym report
+patchgym replay <task-id>
 ```
 
-## What This Is Not
+Older path-oriented usage also works:
 
-PatchGym is not a cloud execution platform, a public leaderboard, a full SWE-bench replacement, or a sandbox for arbitrary untrusted code. It is a compact local benchmark generator and runner.
+```bash
+patchgym mine /path/to/repo --out .patchgym/tasks --validation "python -m pytest -q"
+patchgym verify .patchgym/tasks --repo /path/to/repo
+patchgym run .patchgym/tasks --repo /path/to/repo --agent noop
+```
 
-If you point PatchGym at an untrusted repository or run an untrusted agent command, you are executing code locally. Use a disposable machine, container, or VM when appropriate.
+## Example Task
 
-## Design Principles
+A task directory looks like:
 
-- Local first.
-- Readable over clever.
-- Standard library runtime.
-- Verification before benchmarking.
-- Honest reports over inflated claims.
-- Shell commands over vendor lock-in.
-- Small enough to understand from source.
+```text
+.patchgym/tasks/<task-id>/
+  task.json
+  hidden_tests.patch
+  oracle_solution.patch
+  context/
+    CODEX_TASK.md
+    AGENTS.md
+```
+
+The agent receives the prompt/context, not the hidden tests or oracle patch. Maintainers can inspect the oracle patch to audit task quality.
+
+## Example Report
+
+`patchgym report` writes JSON, Markdown, and HTML. The Markdown report includes:
+
+- tasks generated,
+- pass/fail result,
+- changed files,
+- validation command,
+- duration,
+- local execution safety note.
+
+## Safety Warning
+
+PatchGym runs local Git commands, validation commands, tests, and explicit user-provided agent shell commands. Do not run it on untrusted repositories or with untrusted agents unless you use a disposable container, VM, or machine.
+
+`shell=True` is only used for the explicit agent command. Validation commands are split and executed without a shell. Agent and validation commands both have timeouts.
 
 ## Limitations
 
-PatchGym currently works best on repositories where fixes and tests land in the same commit. It uses path heuristics to identify test files, so unusual layouts may need manual task curation. It does not provide strong isolation by default. Docker support is intentionally left as a thin optional layer rather than a required dependency.
+PatchGym works most reliably when tests and fixes land in the same commit. It uses path heuristics to identify test files. It does not provide strong isolation by default. It does not claim public leaderboard readiness or a complete public-benchmark export format.
 
-## Roadmap
+More limitations are documented in [docs/limitations.md](docs/limitations.md).
 
-- More language-aware test-file heuristics.
-- Optional Docker runner.
-- Task curation commands.
-- Adapters for common coding-agent CLIs.
-- SWE-bench-compatible export.
-- Richer failure classification.
+## Comparison
+
+SWE-bench-style public benchmarks are valuable for broad comparison. PatchGym asks a narrower local question: can an agent fix tasks mined from your repository, under your tests, using your project history?
+
+PatchGym is smaller and less comprehensive than public benchmark infrastructure. That is intentional: it is a readable reference harness and a practical local evaluation loop.
 
 ## Development
 
 ```bash
+python -m pip install --upgrade pip
 python -m pip install -e ".[dev]"
+ruff check .
 pytest -q
-patchgym demo
+python -m build
+bash scripts/demo.sh
 ```
+
+## Roadmap
+
+See [ROADMAP.md](ROADMAP.md).
 
 ## License
 
-MIT
+MIT. See [LICENSE](LICENSE).

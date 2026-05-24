@@ -9,11 +9,12 @@ from .gitutils import commit_all, init_repo
 from .miner import mine_repo
 from .runner import run_tasks
 from .verify import verify_tasks
+from .workspace import safe_remove_tree
 
 
 def create_demo_repo(path: Path) -> Path:
     if path.exists():
-        shutil.rmtree(path)
+        safe_remove_tree(path, allowed_root=path.parent)
     path.mkdir(parents=True)
     init_repo(path)
 
@@ -93,7 +94,7 @@ def create_demo_repo(path: Path) -> Path:
 def run_demo(root: Path, keep_dir: Optional[Path] = None) -> Dict:
     root = Path(root).resolve()
     if root.exists():
-        shutil.rmtree(root)
+        safe_remove_tree(root, allowed_root=root.parent)
     root.mkdir(parents=True)
 
     repo = create_demo_repo(root / "sample-repo")
@@ -115,9 +116,7 @@ def run_demo(root: Path, keep_dir: Optional[Path] = None) -> Dict:
 
     if keep_dir:
         keep_dir = Path(keep_dir).resolve()
-        if keep_dir.exists():
-            shutil.rmtree(keep_dir)
-        shutil.copytree(root, keep_dir)
+        shutil.copytree(root, keep_dir, dirs_exist_ok=True)
         summary["root"] = str(keep_dir)
         summary["report"] = str(keep_dir / "runs" / "oracle" / "report.md")
 

@@ -1,0 +1,9 @@
+cff-version: 1.2.0
+message: "If PatchGym helps your research or engineering workflow, cite the repository."
+title: "PatchGym"
+authors:
+  - family-names: "Kadas"
+    given-names: "Nripan"
+repository-code: "https://github.com/nripankadas07/patchgym"
+license: "MIT"
+version: "0.1.0"
