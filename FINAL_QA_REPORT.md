@@ -2,15 +2,15 @@
 
 ## Repository
 - URL: https://github.com/nripankadas07/patchgym
-- Branch: `harden/launch-readiness`
-- Commit: current `main`; see final release response or `git log -1` for the exact pushed hash
+- Branch: `main`
+- Commit: latest pushed `main`; see final release response or `git log -1` for the exact hash
 - Public: yes, repository is public
 
 ## CI
 - Workflow: `.github/workflows/ci.yml`
 - Python versions: `3.9`, `3.10`, `3.11`, `3.12`, `3.13`
 - Commands: install package, CLI smoke test, `ruff check .`, `pytest -q`, `python -m build`, wheel reinstall smoke test, `patchgym demo --keep-dir patchgym-demo-ci`
-- Latest status: GitHub Actions must be green on the current `main` commit before pinning; verify the live result at https://github.com/nripankadas07/patchgym/actions
+- Latest status: green on `main` during final verification; verify the live result at https://github.com/nripankadas07/patchgym/actions
 
 ## Local fresh-clone verification
 - Clone: pass, `git clone https://github.com/nripankadas07/patchgym /tmp/patchgym-final-hardening`
@@ -47,8 +47,8 @@
 - Demo command works: pass, `bash scripts/demo.sh` and `patchgym demo --keep-dir ...`
 
 ## Profile integration
-- Profile README: polished in branch `profile/polish-patchgym`
-- Manual pinning required: yes, profile pins must be changed from the GitHub UI
+- Profile README: polished on `main`; PatchGym appears as the first flagship.
+- Manual pinning required: no, PatchGym is pinned first on the public GitHub profile.
 
 ## Known limitations
 - Works best when tests and fixes land in the same historical commit.

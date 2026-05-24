@@ -2,20 +2,19 @@
 
 ## GitHub Profile Pinning
 
-Pin PatchGym manually in GitHub profile position 1.
+Completed on 2026-05-24: PatchGym is pinned in GitHub profile position 1.
 
-Recommended order:
+Verified pinned order:
 
 1. patchgym
 2. agent-framework
 3. rag-pipeline
-4. prompt-eval
-5. safejson
-6. decimal-ts
+4. decimal-ts
+5. prompt-eval
+6. safejson
 
-GitHub profile pins usually need to be changed from the profile UI unless an
-authenticated API method is available. Do not claim Codex changed pins unless
-that has actually happened.
+No required profile-pinning action is pending. If pins are changed later,
+restore PatchGym to position 1 from the GitHub profile UI.
 
 ## Optional Polish
 
