@@ -3,14 +3,14 @@
 ## Repository
 - URL: https://github.com/nripankadas07/patchgym
 - Branch: `harden/launch-readiness`
-- Commit: pending local commit from fresh clone `f149ab3`
+- Commit: current `main`; see final release response or `git log -1` for the exact pushed hash
 - Public: yes, repository is public
 
 ## CI
 - Workflow: `.github/workflows/ci.yml`
 - Python versions: `3.9`, `3.10`, `3.11`, `3.12`, `3.13`
 - Commands: install package, CLI smoke test, `ruff check .`, `pytest -q`, `python -m build`, wheel reinstall smoke test, `patchgym demo --keep-dir patchgym-demo-ci`
-- Latest status: prepared for push; post-push GitHub Actions verification is required before pinning
+- Latest status: GitHub Actions must be green on the current `main` commit before pinning; verify the live result at https://github.com/nripankadas07/patchgym/actions
 
 ## Local fresh-clone verification
 - Clone: pass, `git clone https://github.com/nripankadas07/patchgym /tmp/patchgym-final-hardening`
