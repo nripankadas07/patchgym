@@ -93,6 +93,8 @@ That invariant is the heart of the project.
 
 At run time, an agent sees a clean exported snapshot of the base commit and a prompt. It does not receive the hidden tests or oracle solution. PatchGym captures the agent diff, applies the hidden tests, runs the validation command, and records the result.
 
+For a deeper walkthrough, read [docs/TECHNICAL_ARTICLE.md](docs/TECHNICAL_ARTICLE.md).
+
 ## Agent Contract
 
 PatchGym can run any command as an agent. The command is executed inside the base repository snapshot. The following environment variables are provided:
