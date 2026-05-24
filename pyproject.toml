@@ -1,0 +1,49 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "patchgym"
+version = "0.1.0"
+description = "Turn any Git repository into a local SWE-bench-style coding-agent benchmark."
+readme = "README.md"
+requires-python = ">=3.9"
+license = "MIT"
+authors = [
+  { name = "Nripan Kadas" }
+]
+keywords = [
+  "coding-agents",
+  "benchmark",
+  "swe-bench",
+  "git",
+  "testing",
+  "developer-tools"
+]
+classifiers = [
+  "Development Status :: 3 - Alpha",
+  "Environment :: Console",
+  "Intended Audience :: Developers",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.9",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Topic :: Software Development :: Testing",
+  "Topic :: Software Development :: Version Control :: Git"
+]
+dependencies = []
+
+[project.optional-dependencies]
+dev = ["pytest>=7"]
+
+[project.scripts]
+patchgym = "patchgym.cli:main"
+
+[project.urls]
+Homepage = "https://github.com/nripankadas07/patchgym"
+Issues = "https://github.com/nripankadas07/patchgym/issues"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]
