@@ -87,7 +87,11 @@ def _patch_for_paths(repo: Path, parent: str, commit: str, paths: Sequence[str])
 
 
 def _patch_line_count(patch: str) -> int:
-    return sum(1 for line in patch.splitlines() if line.startswith(("+", "-")) and not line.startswith(("+++", "---")))
+    return sum(
+        1
+        for line in patch.splitlines()
+        if line.startswith(("+", "-")) and not line.startswith(("+++", "---"))
+    )
 
 
 def _commit_subject(repo: Path, commit: str) -> str:
@@ -114,7 +118,12 @@ def _score_reason(subject: str, test_files: Sequence[str], solution_files: Seque
     return f"touches {len(test_files)} test file(s) and {len(solution_files)} source file(s)"
 
 
-def build_prompt(subject: str, base_commit: str, validation_command: str, solution_files: Sequence[str]) -> str:
+def build_prompt(
+    subject: str,
+    base_commit: str,
+    validation_command: str,
+    solution_files: Sequence[str],
+) -> str:
     files = "\n".join(f"- {path}" for path in solution_files)
     return (
         "You are given a repository snapshot from a historical commit.\n\n"
@@ -143,7 +152,13 @@ def mine_repo(
     out_dir = Path(out_dir)
     out_dir.mkdir(parents=True, exist_ok=True)
 
-    commits = git(repo, "rev-list", "--first-parent", f"--max-count={max_commits}", "HEAD").stdout.splitlines()
+    commits = git(
+        repo,
+        "rev-list",
+        "--first-parent",
+        f"--max-count={max_commits}",
+        "HEAD",
+    ).stdout.splitlines()
     tasks: List[Task] = []
     seen_ids = set()
 

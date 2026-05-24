@@ -1,9 +1,19 @@
 # Evaluation Metrics
 
-The primary metric is solved tasks:
+The primary metric is binary:
 
 ```text
-agent patch + hidden tests + validation command exits 0
+solved = hidden tests apply and validation exits 0
 ```
 
-Reports also include changed files, validation return codes, patch size, and duration. These supporting fields help maintainers inspect whether a pass is plausible and whether a failure is actionable.
+PatchGym also records:
+
+- validation exit code,
+- changed files,
+- patch line count,
+- agent duration,
+- stdout/stderr files,
+- noop and oracle baseline behavior.
+
+The noop baseline should fail on valid tasks. The oracle baseline should pass.
+Those baselines test the harness before comparing real agents.

@@ -29,19 +29,25 @@ classifiers = [
   "Programming Language :: Python :: 3.10",
   "Programming Language :: Python :: 3.11",
   "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
   "Topic :: Software Development :: Testing",
   "Topic :: Software Development :: Version Control :: Git"
 ]
 dependencies = []
 
 [project.optional-dependencies]
-dev = ["build>=1", "pytest>=7", "ruff>=0.8"]
+dev = [
+  "pytest>=8",
+  "ruff>=0.6",
+  "build>=1.2"
+]
 
 [project.scripts]
 patchgym = "patchgym.cli:main"
 
 [project.urls]
 Homepage = "https://github.com/nripankadas07/patchgym"
+Repository = "https://github.com/nripankadas07/patchgym"
 Issues = "https://github.com/nripankadas07/patchgym/issues"
 
 [tool.pytest.ini_options]
@@ -49,7 +55,7 @@ testpaths = ["tests"]
 pythonpath = ["src"]
 
 [tool.ruff]
-line-length = 120
+line-length = 100
 target-version = "py39"
 
 [tool.ruff.lint]

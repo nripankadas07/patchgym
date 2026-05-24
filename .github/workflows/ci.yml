@@ -7,21 +7,43 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
+
     strategy:
+      fail-fast: false
       matrix:
-        python-version: ["3.9", "3.12"]
+        python-version: ["3.9", "3.10", "3.11", "3.12", "3.13"]
+
     steps:
       - uses: actions/checkout@v4
+
       - uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python-version }}
-      - name: Install
-        run: python -m pip install -e ".[dev]"
+
+      - name: Install package
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -e ".[dev]"
+
+      - name: CLI smoke test
+        run: |
+          patchgym --help
+          python -m patchgym --help
+
       - name: Lint
         run: ruff check .
-      - name: Test
+
+      - name: Tests
         run: pytest -q
+
       - name: Build
         run: python -m build
+
+      - name: Wheel install smoke test
+        run: |
+          python -m pip install --force-reinstall dist/*.whl
+          patchgym --help
+          python -c "import patchgym; print(patchgym.__name__)"
+
       - name: Demo
-        run: bash scripts/demo.sh
+        run: patchgym demo --keep-dir patchgym-demo-ci

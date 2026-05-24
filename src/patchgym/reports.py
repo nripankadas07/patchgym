@@ -43,7 +43,8 @@ def render_html(markdown: str) -> str:
     return (
         '<!doctype html><html><head><meta charset="utf-8">'
         "<title>PatchGym Report</title>"
-        "<style>body{font-family:system-ui,sans-serif;max-width:960px;margin:40px auto;line-height:1.5}"
+        "<style>body{font-family:system-ui,sans-serif;max-width:960px;"
+        "margin:40px auto;line-height:1.5}"
         "pre{white-space:pre-wrap;background:#f6f8fa;padding:16px;border-radius:8px}</style>"
         "</head><body><pre>"
         f"{escaped}"

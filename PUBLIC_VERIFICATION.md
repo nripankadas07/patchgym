@@ -6,15 +6,15 @@ Verification date: 2026-05-24
 
 | URL | Result | Notes |
 | --- | --- | --- |
-| https://github.com/nripankadas07/patchgym | Pass | Public repository page is accessible, README renders, files and topics are visible. |
-| https://github.com/nripankadas07/patchgym/actions | Pass | Actions page is accessible. Latest run shown: `Harden PatchGym release gates`, workflow `ci`, commit `72f9ad6`, duration `38s`. |
-| https://github.com/nripankadas07/patchgym/blob/main/README.md | Pass | README renders and includes source install, demo, CLI, safety, limitations, comparison, development commands, roadmap, and license. |
-| https://github.com/nripankadas07/patchgym/blob/main/docs/patchgym-from-scratch.md | Pass | Documentation page renders publicly. |
-| https://github.com/nripankadas07/nripankadas07 | Pass | Profile repository page is public and README renders PatchGym as the top flagship. |
-| https://github.com/nripankadas07 | Partial | Public profile page renders the PatchGym README card and link, but pinned repositories still show the old order. Manual pinning remains required. |
+| https://github.com/nripankadas07/patchgym | Pass | Public repository page is accessible. |
+| https://github.com/nripankadas07/patchgym/actions | Pending | The strengthened workflow is ready for push; latest hardening CI must pass before pinning. |
+| https://github.com/nripankadas07/patchgym/blob/main/README.md | Pass | README URL is public. The hardening branch keeps source install, demo, CLI, safety, limitations, comparison, development commands, roadmap, and license. |
+| https://github.com/nripankadas07/patchgym/blob/main/docs/patchgym-from-scratch.md | Pass | Documentation URL is public. |
+| https://github.com/nripankadas07/nripankadas07 | Pass | Profile repository is public. |
+| https://github.com/nripankadas07 | Partial | Profile is public, but repository pins still need manual UI updates. |
 
-No broken images were observed in the PatchGym README or profile README because neither uses local image assets.
+## Notes
 
-## Manual Pin Status
-
-PatchGym is ready to pin, but profile pins have not been changed by Codex. See `MANUAL_ACTIONS.md`.
+- No broken local image references are used in the README.
+- PatchGym profile pinning has not been changed by Codex.
+- Re-run this checklist after the hardening branch is pushed and CI completes.

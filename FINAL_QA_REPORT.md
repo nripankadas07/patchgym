@@ -1,126 +1,90 @@
 # PatchGym Final QA Report
 
-## Summary
-- Repo: `nripankadas07/patchgym`
-- Branch: `main`
-- Commit: `72f9ad6` verified from clean clone
-- Public URL: https://github.com/nripankadas07/patchgym
-- Profile repo: `nripankadas07/nripankadas07`
-- Profile commit: `459d8f1`
+## Repository
+- URL: https://github.com/nripankadas07/patchgym
+- Branch: `harden/launch-readiness`
+- Commit: pending local commit from fresh clone `f149ab3`
+- Public: yes, repository is public
 
-## Fresh clone status
-- Result: Pass
-- Command: `rm -rf /tmp/patchgym-verify && git clone https://github.com/nripankadas07/patchgym /tmp/patchgym-verify`
-- Notes: Clean clone succeeded. Latest verified commit was `72f9ad6 Harden PatchGym release gates`.
+## CI
+- Workflow: `.github/workflows/ci.yml`
+- Python versions: `3.9`, `3.10`, `3.11`, `3.12`, `3.13`
+- Commands: install package, CLI smoke test, `ruff check .`, `pytest -q`, `python -m build`, wheel reinstall smoke test, `patchgym demo --keep-dir patchgym-demo-ci`
+- Latest status: prepared for push; post-push GitHub Actions verification is required before pinning
 
-## Install status
-- Result: Pass
-- Command: `python3 -m venv .venv && . .venv/bin/activate && python -m pip install -U pip && python -m pip install -e ".[dev]"`
-- Notes: Editable source install succeeded and created the `patchgym` console script.
+## Local fresh-clone verification
+- Clone: pass, `git clone https://github.com/nripankadas07/patchgym /tmp/patchgym-final-hardening`
+- Install: pass, `python -m pip install -e ".[dev]"`
+- CLI: pass, `patchgym --help` and `python -m patchgym --help`
+- Ruff: pass, `ruff check .` -> `All checks passed!`
+- Tests: pass, `pytest -q` -> `11 passed`
+- Build: pass, `python -m build` created sdist and wheel
+- Wheel install: pass, `python -m pip install --force-reinstall dist/*.whl`
+- Demo: pass, `bash scripts/demo.sh` and `patchgym demo --keep-dir patchgym-demo-final-rerun`
 
-## CLI status
-- Result: Pass
-- Commands verified: `patchgym --help`, `python -m patchgym --help`
-- Notes: Help lists `init`, `mine`, `build`, `list`, `show`, `verify`, `run`, `grade`, `report`, `context`, and `replay`.
+## Task validity
+- Base + hidden tests: fail as expected, exit code `1`
+- Base + hidden tests + oracle: pass, exit code `0`
+- Noop baseline: fail, `0/1`
+- Oracle baseline: pass, `1/1`
 
-## Tests
-- ruff: Pass, `ruff check .` -> `All checks passed!`
-- pytest: Pass, `pytest -q` -> `5 passed`; `pytest -q -ra` -> `5 passed`
-- build: Pass, `python -m build` built `patchgym-0.1.0.tar.gz` and `patchgym-0.1.0-py3-none-any.whl`
-- demo: Pass, `bash scripts/demo.sh` mined one task, built `1/1` valid task, toy agent solved `1/1`, and generated JSON, Markdown, and HTML reports
-
-## End-to-end task validity
-- Task id: `d44a5852-fix-clamp-upper-bound-1e98b1ca`
-- Base + hidden tests: failed as expected, exit `1`
-- Base + hidden tests + oracle: passed, exit `0`
-- Toy agent grade: `1/1`
-
-## Reports generated
-- JSON: `.patchgym/reports/report.json`
-- Markdown: `.patchgym/reports/report.md`
-- HTML: `.patchgym/reports/index.html`
+## Reports
+- Markdown: `.patchgym/reports/report.md` from `bash scripts/demo.sh`
+- JSON if generated: `.patchgym/reports/report.json` from `bash scripts/demo.sh`
+- HTML if generated: `.patchgym/reports/index.html` from `bash scripts/demo.sh`
 
 ## Security review
-- eval/exec: Pass, no `eval(` or `exec(` found in `src`, `tests`, or `examples`
-- shell usage: One `shell=True` call, restricted to explicit user-supplied agent commands
-- cleanup safety: Cleanup goes through `safe_remove_tree`, which checks resolved paths against an allowed root
-- timeout coverage: Git helpers, git archive, validation commands, and agent commands have timeouts
-- documented warnings: README and SECURITY.md warn that untrusted repos, tests, and agents execute local code
+- eval/exec: no `eval(` or `exec(` in `src`, `tests`, or `examples`
+- shell command handling: `shell=True` is limited to the explicit user-provided agent command adapter
+- cleanup safety: `safe_remove_tree` resolves paths and only removes directories under an allowed root
+- timeout coverage: Git helpers, validation commands, and agent commands use timeouts
+- untrusted code warning: README and SECURITY.md warn that tests and agent commands can execute arbitrary local code
 
 ## README truth check
-- PyPI claims: Pass, README says PatchGym is not published to PyPI
-- fake metrics: Pass, no fake benchmark numbers, stars, downloads, or leaderboard claims
-- unsupported badges: Pass, no fake badges
-- demo command: Pass, README uses `bash scripts/demo.sh`
-- limitations: Pass, README and docs/limitations.md explain alpha scope and sandbox limitations
+- No PyPI claim: pass; README says PatchGym is not published to PyPI
+- No fake metrics: pass
+- No fake leaderboard: pass; leaderboard mentions are limitations or non-goals only
+- Demo command works: pass, `bash scripts/demo.sh` and `patchgym demo --keep-dir ...`
 
 ## Profile integration
-- Profile README updated: Pass
-- PatchGym card: Pass, profile README contains `### patchgym` with source install and `bash scripts/demo.sh`
-- Catalog updated: Pass, profile README AI/evaluation catalog includes PatchGym
-- Manual pins documented: Pass, both repos include `MANUAL_ACTIONS.md`
+- Profile README: polished in branch `profile/polish-patchgym`
+- Manual pinning required: yes, profile pins must be changed from the GitHub UI
 
-## Public verification
-- PatchGym public URL: Pass
-- Profile public URL: Partial, README card is visible but pinned repos still require manual update
-- CI URL: Pass
-- Docs URL: Pass
-
-## Remaining blockers
-- None for repository readiness.
-- Manual profile pinning remains outside Codex API control.
-
-## Manual actions
-- Pin PatchGym in position 1.
-- Add social preview image.
-- Enable Discussions if desired.
-- Create GitHub Release only after approval.
-- Publish to PyPI only after approval.
+## Known limitations
+- Works best when tests and fixes land in the same historical commit.
+- Test-file detection is heuristic.
+- There is no strong sandbox by default; use a VM/container for untrusted repos or agents.
+- Local test flakiness affects benchmark quality.
+- PatchGym is not a public leaderboard and does not publish model comparisons.
 
 ## Exact commands run
 
 ```bash
-pwd
-git --version
-gh --version || true
-gh auth status || true
-gh repo view nripankadas07/patchgym --json name,nameWithOwner,url,description,visibility,isPrivate,isArchived,repositoryTopics,defaultBranchRef || true
-rm -rf /tmp/patchgym-verify
-git clone https://github.com/nripankadas07/patchgym /tmp/patchgym-verify
-cd /tmp/patchgym-verify
+rm -rf /tmp/patchgym-final-hardening
+git clone https://github.com/nripankadas07/patchgym /tmp/patchgym-final-hardening
+cd /tmp/patchgym-final-hardening
 git status --short
 git log --oneline -5
+git checkout -b harden/launch-readiness
+find . -maxdepth 2 -type f | sort
+find docs -maxdepth 2 -type f | sort || true
+find tests -maxdepth 2 -type f | sort || true
+find .github -maxdepth 3 -type f | sort || true
+cat pyproject.toml
+cat .github/workflows/ci.yml
 python3 -m venv .venv
 . .venv/bin/activate
-python -m pip install -U pip
+python -m pip install --upgrade pip
 python -m pip install -e ".[dev]"
-python -c "import patchgym; print(patchgym.__name__)"
 patchgym --help
 python -m patchgym --help
 ruff check .
-python -m build
-python -m pip install dist/*.whl --force-reinstall
-patchgym --help
 pytest -q
-pytest -q -ra
+python -m build
+python -m pip install --force-reinstall dist/*.whl
+patchgym --help
+python -c "import patchgym; print(patchgym.__name__)"
+patchgym demo --keep-dir patchgym-demo-final
 bash scripts/demo.sh
-rm -rf /tmp/patchgym-manual
-mkdir -p /tmp/patchgym-manual
-cd /tmp/patchgym-manual
-python /tmp/patchgym-verify/tests/fixtures/make_tinycalc_repo.py tinycalc
-cd tinycalc
-patchgym init
-test -f patchgym.toml
-patchgym mine .
-patchgym build .
-patchgym list
-TASK_ID="$(patchgym list --plain 2>/dev/null | head -1 | awk '{print $1}' || true)"
-patchgym show "$TASK_ID"
-patchgym verify "$TASK_ID"
-patchgym context "$TASK_ID"
-find .patchgym/tasks/"$TASK_ID" -maxdepth 3 -type f | sort
-patchgym run "$TASK_ID" --agent "bash /tmp/patchgym-verify/examples/custom_agent/agent.sh"
-patchgym report
-gh run list --repo nripankadas07/patchgym --limit 5
-gh repo view nripankadas07/patchgym --json description,repositoryTopics,homepageUrl,licenseInfo,isPrivate,isArchived,hasIssuesEnabled,hasDiscussionsEnabled
+patchgym demo --keep-dir patchgym-demo-final-rerun
 ```

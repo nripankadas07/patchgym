@@ -1,13 +1,25 @@
 ## Summary
 
-## Validation
+## Tests Run
 
 - [ ] `ruff check .`
 - [ ] `pytest -q`
 - [ ] `python -m build`
-- [ ] `bash scripts/demo.sh`
+- [ ] `python -m pip install --force-reinstall dist/*.whl`
+- [ ] `bash scripts/demo.sh` or `patchgym demo --keep-dir patchgym-demo-ci`
 
-## Safety
+## Docs Updated
+
+- [ ] README/docs updated
+- [ ] No fake PyPI, release, benchmark, or leaderboard claims added
+
+## Safety / Security Considerations
 
 - [ ] No new unbounded command execution
-- [ ] No misleading benchmark or package claims
+- [ ] Agent command execution remains explicit and documented
+- [ ] Cleanup paths are constrained to temp or `.patchgym` workspaces
+
+## Breaking Change
+
+- [ ] Yes
+- [ ] No

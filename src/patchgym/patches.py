@@ -13,7 +13,11 @@ def split_paths(paths: Sequence[str]) -> tuple[list[str], list[str]]:
 
 
 def patch_line_count(patch: str) -> int:
-    return sum(1 for line in patch.splitlines() if line.startswith(("+", "-")) and not line.startswith(("+++", "---")))
+    return sum(
+        1
+        for line in patch.splitlines()
+        if line.startswith(("+", "-")) and not line.startswith(("+++", "---"))
+    )
 
 
 def patch_changed_files(patch_file: Path) -> list[str]:

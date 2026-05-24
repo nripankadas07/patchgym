@@ -72,7 +72,8 @@ def cmd_build(args: argparse.Namespace) -> int:
     results = verify_tasks(tasks, timeout=config.validation_timeout)
     build_path = root / ".patchgym" / "build.json"
     build_path.parent.mkdir(parents=True, exist_ok=True)
-    build_path.write_text(json.dumps({"results": [result.to_dict() for result in results]}, indent=2) + "\n")
+    payload = {"results": [result.to_dict() for result in results]}
+    build_path.write_text(json.dumps(payload, indent=2) + "\n")
     valid = sum(1 for result in results if result.valid)
     print(f"built {valid}/{len(results)} valid task(s)")
     return 0 if valid else 1

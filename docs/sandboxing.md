@@ -1,7 +1,18 @@
 # Sandboxing
 
-PatchGym is not a strong sandbox. It creates temporary workspaces, but validation commands and agent commands execute locally.
+PatchGym creates temporary workspaces, but it is not a strong sandbox.
 
-Use trusted repositories and trusted agents for normal local runs. For untrusted code, use an isolated container, VM, or disposable machine.
+Local execution includes:
 
-PatchGym applies timeouts to Git helpers, validation commands, and agent commands.
+- Git commands,
+- repository validation commands,
+- test suites,
+- explicit agent shell commands.
+
+Agent and validation commands have timeouts. Python bytecode caches are kept
+workspace-local where possible and cleaned before validation transitions. Cleanup
+helpers check resolved paths before deleting generated directories.
+
+For untrusted repositories or agents, run PatchGym inside a disposable container,
+VM, or separate machine. Optional Docker/container execution is a roadmap item,
+not an MVP guarantee.

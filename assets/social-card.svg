@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630" role="img" aria-labelledby="title desc">
+  <title id="title">PatchGym</title>
+  <desc id="desc">Turn Git history into coding-agent benchmarks</desc>
+  <rect width="1200" height="630" fill="#0b1020"/>
+  <rect x="72" y="72" width="1056" height="486" rx="28" fill="#111827" stroke="#38bdf8" stroke-width="4"/>
+  <text x="120" y="230" fill="#f8fafc" font-family="Arial, Helvetica, sans-serif" font-size="96" font-weight="700">PatchGym</text>
+  <text x="124" y="315" fill="#bae6fd" font-family="Arial, Helvetica, sans-serif" font-size="42">Turn Git history into coding-agent benchmarks</text>
+  <text x="124" y="415" fill="#d1d5db" font-family="Arial, Helvetica, sans-serif" font-size="34">local • verifiable • from scratch</text>
+  <path d="M122 486h956" stroke="#334155" stroke-width="3"/>
+  <text x="124" y="526" fill="#94a3b8" font-family="Arial, Helvetica, sans-serif" font-size="24">Mine commits → hide tests → run agents → grade patches</text>
+</svg>

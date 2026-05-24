@@ -15,7 +15,8 @@ def write_context_pack(task: Task) -> Path:
                 "",
                 task.prompt,
                 "",
-                "Hidden tests and oracle patches are intentionally not included in this context pack.",
+                "Hidden tests and oracle patches are intentionally not included "
+                "in this context pack.",
                 "",
             ]
         )
@@ -27,7 +28,8 @@ def write_context_pack(task: Task) -> Path:
                 "",
                 "Edit the working tree to satisfy the task prompt.",
                 "Run the validation command when useful.",
-                "Do not inspect future Git history, hidden test patches, or oracle solution patches.",
+                "Do not inspect future Git history, hidden test patches, "
+                "or oracle solution patches.",
                 "",
             ]
         )

@@ -1,0 +1,48 @@
+name: Documentation issue
+description: Report unclear, missing, or inaccurate documentation.
+title: "[docs] "
+labels: ["documentation"]
+body:
+  - type: input
+    id: version
+    attributes:
+      label: Version or commit
+    validations:
+      required: true
+  - type: input
+    id: os
+    attributes:
+      label: OS
+    validations:
+      required: true
+  - type: input
+    id: python
+    attributes:
+      label: Python version
+    validations:
+      required: true
+  - type: textarea
+    id: command
+    attributes:
+      label: Command run, if any
+      render: shell
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: What did you expect the docs to explain?
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: What did the docs say instead?
+    validations:
+      required: true
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Reproduction steps or affected page
+    validations:
+      required: true

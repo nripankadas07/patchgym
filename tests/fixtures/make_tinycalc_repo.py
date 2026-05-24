@@ -7,7 +7,15 @@ from pathlib import Path
 
 
 def run(cmd: list[str], cwd: Path) -> None:
-    subprocess.run(cmd, cwd=str(cwd), check=True, text=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, timeout=60)
+    subprocess.run(
+        cmd,
+        cwd=str(cwd),
+        check=True,
+        text=True,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+        timeout=60,
+    )
 
 
 def commit_all(repo: Path, message: str) -> None:

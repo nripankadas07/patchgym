@@ -1,14 +1,13 @@
 # Quality Notes
 
-PatchGym release gates:
+PatchGym is maintained as a local-first, source-installable reference
+implementation.
 
-- fresh clone install from source,
-- `ruff check .`,
-- `pytest -q`,
-- `python -m build`,
-- `bash scripts/demo.sh`,
-- hidden-test/oracle validity proof,
-- README truth check,
-- security review.
+Quality bar:
 
-The project intentionally avoids fake package badges, fake benchmark numbers, and fake production claims.
+- hidden-test/oracle verification before benchmark claims,
+- reproducible demo from a fresh clone,
+- honest benchmark reporting with no fake metrics,
+- no fake model comparisons or leaderboard claims,
+- no PyPI claim until a package is actually published,
+- CI must run CLI smoke tests, Ruff, pytest, build, wheel install, and demo.

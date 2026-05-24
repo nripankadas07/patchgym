@@ -1,13 +1,39 @@
 # How It Works
 
-PatchGym scans first-parent Git history and looks for small commits that changed both test-looking files and source files.
+Lifecycle:
 
-For each candidate:
+```text
+Git history -> mining -> task files -> verification -> agent run -> grading -> report
+```
 
-- the parent commit becomes the base state,
-- test-file changes become hidden tests,
-- source-file changes become the oracle patch,
-- the commit subject becomes part of the task prompt,
-- the configured validation command becomes the grader.
+## Mining
 
-The task is accepted only if hidden tests fail on the base and pass after the oracle patch.
+PatchGym scans first-parent commits and looks for small changes that touch both
+test-looking files and source files. These commits are likely to contain a
+behavior change plus the tests that describe it.
+
+## Task Creation
+
+For each candidate commit, PatchGym writes:
+
+- `task.json`
+- `hidden_tests.patch`
+- `oracle_solution.patch`
+
+The agent-facing prompt is derived from the historical commit subject and the
+changed source paths. The oracle patch remains maintainer-only.
+
+## Verification
+
+PatchGym exports the base commit, applies hidden tests, and expects validation
+to fail. It then applies the oracle patch and expects validation to pass.
+
+## Agent Run
+
+An agent command runs inside a temporary base workspace. PatchGym captures the
+agent diff, applies hidden tests, and runs validation.
+
+## Grading and Reporting
+
+A task is solved when validation exits with code `0`. Reports include pass/fail,
+changed files, validation return code, duration, and patch size.

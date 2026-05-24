@@ -59,6 +59,18 @@ base + hidden tests + oracle patch passes
 
 During an agent run, PatchGym exports the base commit into a temporary workspace, runs the agent command there, captures the agent diff, applies hidden tests, runs the validation command, and records the result.
 
+Deeper docs:
+
+- [PatchGym from scratch](docs/patchgym-from-scratch.md)
+- [How it works](docs/how-it-works.md)
+- [Mining Git history](docs/mining-git-history.md)
+- [Hidden tests](docs/hidden-tests.md)
+- [Agent adapters](docs/agent-adapters.md)
+- [Sandboxing](docs/sandboxing.md)
+- [Evaluation metrics](docs/evaluation-metrics.md)
+- [Comparisons](docs/comparisons.md)
+- [Limitations](docs/limitations.md)
+
 ## CLI
 
 ```bash
@@ -138,6 +150,9 @@ pytest -q
 python -m build
 bash scripts/demo.sh
 ```
+
+CI runs the same core gates across Python 3.9 through 3.13: CLI smoke tests,
+Ruff, pytest, build, wheel install, and demo.
 
 ## Roadmap
 

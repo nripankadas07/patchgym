@@ -27,7 +27,10 @@ def write_markdown_report(path: Path, agent: str, results: Iterable[Dict]) -> No
     for row in rows:
         result = "pass" if row.get("solved") else "fail"
         lines.append(
-            "| `{task_id}` | {result} | {returncode} | {duration:.2f}s | {patch_lines} | {changed_files} |".format(
+            (
+                "| `{task_id}` | {result} | {returncode} | {duration:.2f}s | "
+                "{patch_lines} | {changed_files} |"
+            ).format(
                 task_id=row["task_id"],
                 result=result,
                 returncode=row.get("validation_returncode", ""),

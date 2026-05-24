@@ -10,7 +10,13 @@ from typing import Dict, List, Optional
 from .gitutils import run
 from .models import Task
 from .report import write_json, write_markdown_report
-from .workspace import apply_patch, clean_python_bytecode, export_base_snapshot, run_command, run_shell
+from .workspace import (
+    apply_patch,
+    clean_python_bytecode,
+    export_base_snapshot,
+    run_command,
+    run_shell,
+)
 
 
 @dataclass
@@ -35,10 +41,19 @@ class AgentRunResult:
 
 
 def _count_patch_lines(patch: str) -> int:
-    return sum(1 for line in patch.splitlines() if line.startswith(("+", "-")) and not line.startswith(("+++", "---")))
+    return sum(
+        1
+        for line in patch.splitlines()
+        if line.startswith(("+", "-")) and not line.startswith(("+++", "---"))
+    )
 
 
-def _agent_environment(task: Task, workspace: Path, prompt_file: Path, metadata_file: Path) -> Dict[str, str]:
+def _agent_environment(
+    task: Task,
+    workspace: Path,
+    prompt_file: Path,
+    metadata_file: Path,
+) -> Dict[str, str]:
     env = os.environ.copy()
     env.update(
         {
@@ -115,7 +130,11 @@ def run_task(
             hidden_applied = hidden.returncode == 0
             if hidden_applied:
                 clean_python_bytecode(workspace)
-                validation = run_command(task.validation_command, workspace, timeout=validation_timeout)
+                validation = run_command(
+                    task.validation_command,
+                    workspace,
+                    timeout=validation_timeout,
+                )
                 validation_returncode = validation["returncode"]
                 (task_out / "validation.stdout.txt").write_text(validation["stdout"])
                 (task_out / "validation.stderr.txt").write_text(validation["stderr"])

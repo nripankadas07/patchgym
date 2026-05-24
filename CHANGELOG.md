@@ -1,10 +1,7 @@
 # Changelog
 
-## 0.1.0
+## 0.1.0 - Unreleased
 
-- Initial local-first PatchGym benchmark harness.
-- Git-history task mining.
-- Hidden-test/oracle validation.
-- Shell-command agent runner.
-- JSON, Markdown, and HTML reports.
-- Tiny no-key demo and CI.
+- Initial public PatchGym implementation.
+- Added local demo, task mining, hidden-test/oracle verification, agent runs,
+  and reports.

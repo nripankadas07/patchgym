@@ -75,4 +75,7 @@ def verify_tasks(
     timeout: int = 120,
     keep_workspace: bool = False,
 ) -> List[VerificationResult]:
-    return [verify_task(task, repo=repo, timeout=timeout, keep_workspace=keep_workspace) for task in tasks]
+    return [
+        verify_task(task, repo=repo, timeout=timeout, keep_workspace=keep_workspace)
+        for task in tasks
+    ]
