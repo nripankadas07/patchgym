@@ -40,6 +40,22 @@ agent 'bash .../examples/custom_agent/agent.sh' solved 1/1 task(s)
 PatchGym demo complete
 ```
 
+## Flagship Evidence
+
+PatchGym is the flagship because it is a concrete evaluation loop, not just a
+demo wrapper. It mines real Git history, proves task validity with hidden tests
+and an oracle patch, runs an agent command in a fresh workspace, and writes
+auditable reports.
+
+Reviewer-oriented entry points:
+
+- [Benchmark page](docs/benchmark-page.md): what PatchGym measures, what it does
+  not claim, and how the local benchmark invariant works.
+- [Comparisons](docs/comparisons.md): a table against public benchmarks,
+  repo-to-prompt tools, coding agents, and plain test runners.
+- [90-second walkthrough script](docs/walkthrough-90-seconds.md): the short
+  recorded-demo script for explaining the project quickly and honestly.
+
 ## How It Works
 
 For each selected historical commit, PatchGym splits the change into:
