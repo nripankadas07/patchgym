@@ -84,6 +84,7 @@ Deeper docs:
 - [Agent adapters](docs/agent-adapters.md)
 - [Sandboxing](docs/sandboxing.md)
 - [Evaluation metrics](docs/evaluation-metrics.md)
+- [Reproducible runs](docs/reproducible-runs.md)
 - [Comparisons](docs/comparisons.md)
 - [Limitations](docs/limitations.md)
 
@@ -137,6 +138,16 @@ The agent receives the prompt/context, not the hidden tests or oracle patch. Mai
 - validation command,
 - duration,
 - local execution safety note.
+
+Each run directory also writes:
+
+- `manifest.json`: task commits, hidden-test/oracle patch hashes, artifact
+  hashes, changed files, return codes, and totals.
+- `trace.jsonl`: a TraceWeave-compatible event stream for agent execution,
+  patch capture, hidden-test application, validation, and grading.
+
+These files are designed to be ingested by SandboxLedger and analyzed by
+TraceWeave without giving the agent hidden tests or oracle patches.
 
 ## Safety Warning
 

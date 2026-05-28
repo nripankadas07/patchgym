@@ -7,6 +7,7 @@ from dataclasses import asdict, dataclass
 from pathlib import Path
 from typing import Dict, List, Optional
 
+from .artifacts import write_run_artifacts
 from .gitutils import run
 from .models import Task
 from .report import write_json, write_markdown_report
@@ -205,4 +206,5 @@ def run_tasks(
     data = [result.to_dict() for result in results]
     write_json(out_dir / "report.json", {"agent": agent, "results": data})
     write_markdown_report(out_dir / "report.md", agent=agent, results=data)
+    write_run_artifacts(out_dir, agent, tasks, data)
     return results

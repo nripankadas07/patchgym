@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import json
 import sys
 from pathlib import Path
 
@@ -14,6 +15,15 @@ def test_noop_fails_and_oracle_passes(tmp_path: Path, tinycalc_tasks) -> None:
     assert noop[0].solved is False
     assert oracle[0].solved is True
     assert grade_report(tmp_path / "runs" / "oracle" / "report.json") == {"solved": 1, "total": 1}
+
+    manifest = json.loads((tmp_path / "runs" / "oracle" / "manifest.json").read_text())
+    trace_lines = (tmp_path / "runs" / "oracle" / "trace.jsonl").read_text().splitlines()
+    assert manifest["schema_version"] == "patchgym.run_manifest.v1"
+    assert manifest["totals"] == {"tasks": 1, "solved": 1, "failed": 0}
+    assert manifest["tasks"][0]["hidden_tests_patch_sha256"]
+    assert manifest["tasks"][0]["oracle_solution_patch_sha256"]
+    assert "agent_patch" in manifest["tasks"][0]["artifacts"]
+    assert any('"action": "run_summary"' in line for line in trace_lines)
 
 
 def test_shell_agent_solves_and_timeout_is_enforced(tmp_path: Path, tinycalc_tasks) -> None:
